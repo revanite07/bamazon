@@ -1,0 +1,27 @@
+{
+  "name": "store-front-cli",
+  "version": "1.0.0",
+  "description": "BAMAZON",
+  "main": "store.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/revanite07/store-front-cli.git"
+  },
+  "keywords": [
+    "BAMAZON",
+    "APP"
+  ],
+  "author": "Kelan Moffatt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/revanite07/store-front-cli/issues"
+  },
+  "homepage": "https://github.com/revanite07/store-front-cli#readme",
+  "dependencies": {
+    "inquirer": "^6.2.1",
+    "mysql": "^2.16.0"
+  }
+}
