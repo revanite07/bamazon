@@ -11,10 +11,10 @@ var connection = mysql.createConnection({
   
   connection.connect(function(err) {
     if (err) throw err;
-    start();
+    enterStore();
   });
  
-  function start() {
+  function enterStore() {
     inquirer
       .prompt({
         name: "buy",
@@ -30,7 +30,7 @@ var connection = mysql.createConnection({
       });
   }
   
-  function buyItem() 
+  function buyItem() {
     connection.query("SELECT * FROM products", function(err, results) {
       if (err) throw err;
       inquirer
@@ -41,7 +41,7 @@ var connection = mysql.createConnection({
             choices: function() {
               var choiceArray = [];
               for (var i = 0; i < results.length; i++) {
-                choiceArray.push(results[i].product_name);
+                choiceArray.push(results[i].product);
               }
               return choiceArray;
             },
@@ -57,17 +57,17 @@ var connection = mysql.createConnection({
          
           var chosenItem;
           for (var i = 0; i < results.length; i++) {
-            if (results[i].product_name === answer.choice) {
+            if (results[i].product === answer.choice) {
               chosenItem = results[i];
             }
           }
        
-        if (chosenItem.stock_quantity > parseInt(answer.quantity)) {
+        if (chosenItem.stock > parseInt(answer.quantity)) {
             connection.query(
               "UPDATE products SET ? WHERE ?",
               [
                 {
-                  stock_quantity: answer.quantity
+                  stock: chosenItem.stock-= answer.quantity
                 },
                 {
                   id: chosenItem.id
@@ -75,16 +75,17 @@ var connection = mysql.createConnection({
               ],
               function(error) {
                 if (error) throw err;
-                console.log("Thank you or your Order!");
-                start();
+                console.log(stock);
+                console.log("Thank you for your Order!");
+                enterStore();
               }
             );
           }
           else {
             console.log("Sorry we do not have the quantity of items you selected in stock");
-            start();
+            enterStore();
           }
           
         });
     });
-  
+}
