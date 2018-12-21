@@ -45,12 +45,16 @@ function chooseOption() {
             switch (option) {
                 case "View Products For Sale":
                     viewItems();
+                    break;
                 case "View Low Inventory":
                     viewLowStock();
+                    break;
                 case "Restock Products":
                     restockItem();
+                    break;
                 case "Add New Product":
-                //newProduct();
+                    newProduct();
+                    break;
                 case "Return to Home":
                     enterStore();
                     break;
@@ -59,17 +63,22 @@ function chooseOption() {
 }
 function viewItems() {
     connection.query("SELECT * FROM products", function (err, results) {
+        if (err) throw err;
         console.log(results);
     })
-    
+    chooseOption();
 }
 function viewLowStock() {
     connection.query("SELECT * FROM products", function (err, results) {
         if (err) throw err;
-        if (results.stock < 5){
-            console.log(results);
+
+        for (var k = 0; k < results.length; k++) {
+            if (results[k].stock < 5) {
+                console.log(results[k]);
+            }
         }
-     })
+        chooseOption();
+    })
 }
 
 
@@ -117,10 +126,55 @@ function restockItem() {
                         if (error) throw err;
                         console.log(chosenItem.stock);
                         console.log("You Have been restocked!!");
-                        
+
                     })
             })
     })
-    
+    enterStore();
+}
+
+function newProduct() {
+    inquirer
+        .prompt([
+            {
+                name: "name",
+                type: "input",
+                message: "What product would you like to add to the catalog?"
+            },
+            {
+                name: "category",
+                type: "input",
+                message: "What Department does this product belong in?"
+            },
+            {
+                name: "cost",
+                type: "input",
+                message: "How much does this product cost?"
+            },
+            {
+                name: "stockLevel",
+                type: "input",
+                message: "How many would you like in stock?"
+            }
+
+        ]).then(function (answer) {
+
+            console.log("Updating product catalog with new item...\n");
+            connection.query(
+                "INSERT INTO products SET ?",
+                [
+                    {
+                        product: answer.name,
+                        department: answer.category,
+                        price: answer.cost,
+                        stock: answer.stockLevel
+                    },
+                ],
+                function (err, res) {
+                    if (err) throw err;
+                    console.log(res.affectedRows + " product catalog updated!\n");
+                    enterStore();
+                })
+        });
 }
 
